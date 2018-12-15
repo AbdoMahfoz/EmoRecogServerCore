@@ -79,7 +79,7 @@ class Program
                         {
                             Console.WriteLine(remoteip + ": received a " + PhotoSize + " bytes photo");
                         }
-                        //File.WriteAllBytes("image.jpg", Photo.ToArray());
+                        File.WriteAllBytes(remoteip + ".jpg", Photo.ToArray());
                         //Image processing goes here
                         Process p = new Process();
                         p.StartInfo.FileName = "python";
@@ -87,11 +87,11 @@ class Program
                         p.StartInfo.RedirectStandardInput = true;
                         p.StartInfo.RedirectStandardOutput = true;
                         p.StartInfo.CreateNoWindow = true;
-                        p.StartInfo.UseShellExecute = true;
+                        p.StartInfo.UseShellExecute = false;
                         p.Start();
-                        p.StandardInput.WriteLine(Encoding.ASCII.GetString(Photo.ToArray()));
-                        byte[] ResPhoto = Encoding.ASCII.GetBytes(p.StandardOutput.ReadToEnd());
+                        p.StandardInput.WriteLine(Directory.GetCurrentDirectory() + "/" + remoteip + ".jpg");
                         p.WaitForExit();
+                        byte[] ResPhoto = File.ReadAllBytes(remoteip + ".jpg");
                         lock(ConsoleLock)
                         {
                             Console.WriteLine(remoteip + ": finished image processsing, transmitting " + ResPhoto.Length + " image");

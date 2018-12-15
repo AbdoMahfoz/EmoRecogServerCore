@@ -65,9 +65,10 @@ avg_values = []
 #        if file.endswith("png")or file.endswith("jpg")or file.endswith("jpeg"):
 
 #            path = os.path.join(root, file)
-#frame = cv2.imread(path,1)
+OutFileName = raw_input()
+frame = cv2.imread(OutFileName,1)
 #print(type(frame))
-frame = cv2.imdecode(np.fromstring(input(), np.uint8), cv2.IMREAD_COLOR)
+#frame = cv2.imdecode(np.fromstring(input(), np.uint8), cv2.IMREAD_COLOR)
 gray, detected_faces = detect_face(frame)
 gray, detected_faces = detect_face(frame)
 
@@ -110,5 +111,5 @@ for face in detected_faces:
             cv2.putText(frame, "Surprise", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
         elif prediction_result == 6:
             cv2.putText(frame, "Neutral", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
-        cv2.imwrite("output.jpg", frame)
-print (frame.tobytes())
+        cv2.imwrite(OutFileName, frame)
+
