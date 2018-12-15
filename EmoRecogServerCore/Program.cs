@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.IO;
+using System.Diagnostics;
 
 class Program
 {
@@ -78,8 +79,28 @@ class Program
                         {
                             Console.WriteLine(remoteip + ": received a " + PhotoSize + " bytes photo");
                         }
-                        File.WriteAllBytes("image.jpg", Photo.ToArray());
+                        //File.WriteAllBytes("image.jpg", Photo.ToArray());
                         //Image processing goes here
+                        Process p = new Process();
+                        p.StartInfo.FileName = "python";
+                        p.StartInfo.Arguments = "FaceEmo.py";
+                        p.StartInfo.RedirectStandardInput = true;
+                        p.StartInfo.RedirectStandardOutput = true;
+                        p.StartInfo.CreateNoWindow = true;
+                        p.StartInfo.UseShellExecute = true;
+                        p.Start();
+                        p.StandardInput.WriteLine(Encoding.ASCII.GetString(Photo.ToArray()));
+                        byte[] ResPhoto = Encoding.ASCII.GetBytes(p.StandardOutput.ReadToEnd());
+                        p.WaitForExit();
+                        lock(ConsoleLock)
+                        {
+                            Console.WriteLine(remoteip + ": finished image processsing, transmitting " + ResPhoto.Length + " image");
+                        }
+                        s.Send(ResPhoto);
+                        lock(ConsoleLock)
+                        {
+                            Console.WriteLine("Finished transmission");
+                        }
                     }
                     break;
                 default:
